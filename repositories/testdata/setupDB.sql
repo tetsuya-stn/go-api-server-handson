@@ -16,10 +16,10 @@ create table if not exists comments (
 );
 
 insert into articles (title, contents, username, nice, created_at) values
-	('firstPost', 'This is my first blog', 'saki', 2, now());
+	('firstPost', 'This is my first blog', 'stn', 2, now());
 
 insert into articles (title, contents, username, nice) values
-	('2nd', 'Second blog post', 'saki', 4);
+	('2nd', 'Second blog post', 'stn', 4);
 
 insert into comments (article_id, message, created_at) values
 	(1, '1st comment yeah', now());

@@ -1,8 +1,6 @@
 package testdata
 
 import (
-	"time"
-
 	"github.com/tetsuya-stn/go-api-server-handson/models"
 )
 
@@ -11,36 +9,15 @@ var ArticleTestData = []models.Article{
 		Id:       1,
 		Title:    "firstPost",
 		Contents: "This is my first blog",
-		UserName: "saki",
+		UserName: "stn",
 		NiceNum:  2,
 	},
 	models.Article{
 		Id:       2,
 		Title:    "2nd",
 		Contents: "Second blog post",
-		UserName: "saki",
-		NiceNum:  6,
-	},
-	models.Article{
-		Id:       3,
-		Title:    "3",
-		Contents: "Third blog post",
-		UserName: "saki",
-		NiceNum:  6,
-	},
-	models.Article{
-		Id:       4,
-		Title:    "4th",
-		Contents: "Forth blog post",
-		UserName: "saki",
-		NiceNum:  6,
-	},
-	models.Article{
-		Id:       5,
-		Title:    "5th",
-		Contents: "Fifth blog post",
-		UserName: "saki",
-		NiceNum:  10,
+		UserName: "stn",
+		NiceNum:  4,
 	},
 }
 
@@ -48,13 +25,11 @@ var CommentTestData = []models.Comment{
 	models.Comment{
 		CommentId: 1,
 		ArticleId: 1,
-		Message:   "test comment1",
-		CreatedAt: time.Now(),
+		Message:   "1st comment yeah",
 	},
 	models.Comment{
 		CommentId: 2,
-		ArticleId: 2,
-		Message:   "test comment2",
-		CreatedAt: time.Now(),
+		ArticleId: 1,
+		Message:   "welcome",
 	},
 }
