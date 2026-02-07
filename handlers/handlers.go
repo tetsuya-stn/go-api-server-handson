@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/tetsuya-stn/go-api-server-handson/models"
+	"github.com/tetsuya-stn/go-api-server-handson/services"
 )
 
 func HelloHandler(w http.ResponseWriter, req *http.Request) {
@@ -21,7 +22,12 @@ func PostArticleHandler(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
 	}
 
-	article := reqArticle
+	article, err := services.PostArticleService(reqArticle)
+	if err != nil {
+		fmt.Printf("PostArticleService: %s", err.Error())
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(article)
 }
@@ -40,8 +46,13 @@ func ArticleListHandler(w http.ResponseWriter, req *http.Request) {
 	} else {
 		page = 1
 	}
-	fmt.Println(page)
-	articleList := []models.Article{models.Article1, models.Article2}
+
+	articleList, err := services.GetArticleListService(page)
+	if err != nil {
+		fmt.Printf("GetArticleListService: %s", err.Error())
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
 
 	json.NewEncoder(w).Encode(articleList)
 }
@@ -53,25 +64,44 @@ func ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(articleId)
-	article := models.Article1
+	article, err := services.GetArticleService(articleId)
+	if err != nil {
+		fmt.Printf("GetArticleService: %s", err.Error())
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
+	}
+
 	json.NewEncoder(w).Encode(article)
 }
 
 func PostNiceHandler(w http.ResponseWriter, req *http.Request) {
-	var article models.Article
+	var reqArticle models.Article
 
-	if err := json.NewDecoder(req.Body).Decode(&article); err != nil {
+	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		http.Error(w, "fail to decode json", http.StatusBadRequest)
+	}
+
+	article, err := services.PostNiceService(reqArticle.Id)
+	if err != nil {
+		fmt.Printf("PostNiceService: %s", err.Error())
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
 	}
 
 	json.NewEncoder(w).Encode(article)
 }
 
 func PostCommentHandler(w http.ResponseWriter, req *http.Request) {
-	var comment models.Comment
-	if err := json.NewDecoder(req.Body).Decode(&comment); err != nil {
+	var reqComment models.Comment
+	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
 		http.Error(w, "fail to decode json", http.StatusBadRequest)
+	}
+
+	comment, err := services.PostCommentService(reqComment)
+	if err != nil {
+		fmt.Printf("PostCommentService: %s", err.Error())
+		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		return
 	}
 
 	json.NewEncoder(w).Encode(comment)
