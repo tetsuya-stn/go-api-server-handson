@@ -7,15 +7,15 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/tetsuya-stn/go-api-server-handson/controllers/services"
 	"github.com/tetsuya-stn/go-api-server-handson/models"
-	"github.com/tetsuya-stn/go-api-server-handson/services"
 )
 
 type MyAppController struct {
-	service *services.MyAppService
+	service services.MyAppServicer
 }
 
-func NewMyAppController(s *services.MyAppService) *MyAppController {
+func NewMyAppController(s services.MyAppServicer) *MyAppController {
 	return &MyAppController{service: s}
 }
 
