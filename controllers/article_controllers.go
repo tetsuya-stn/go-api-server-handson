@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/mux"
 	"github.com/tetsuya-stn/go-api-server-handson/controllers/services"
 	"github.com/tetsuya-stn/go-api-server-handson/models"
 )
@@ -61,7 +60,7 @@ func (c *ArticleController) ArticleListHandler(w http.ResponseWriter, req *http.
 }
 
 func (c *ArticleController) ArticleDetailHandler(w http.ResponseWriter, req *http.Request) {
-	articleId, err := strconv.Atoi(mux.Vars(req)["id"])
+	articleId, err := strconv.Atoi(req.PathValue("id"))
 	if err != nil {
 		http.Error(w, "Invalid query parameter", http.StatusBadRequest)
 		return

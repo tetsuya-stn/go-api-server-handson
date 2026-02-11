@@ -4,23 +4,22 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/tetsuya-stn/go-api-server-handson/controllers"
 	"github.com/tetsuya-stn/go-api-server-handson/services"
 )
 
-func NewRouter(db *sql.DB) *mux.Router {
+func NewRouter(db *sql.DB) *http.ServeMux {
 	ser := services.NewMyAppService(db)
 	aCon := controllers.NewArticleController(ser)
 	cCon := controllers.NewCommentController(ser)
-	r := mux.NewRouter()
+	r := http.NewServeMux()
 
-	r.HandleFunc("/article", aCon.PostArticleHandler).Methods(http.MethodPost)
-	r.HandleFunc("/article/list", aCon.ArticleListHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article/{id:[0-9]+}", aCon.ArticleDetailHandler).Methods(http.MethodGet)
-	r.HandleFunc("/article/nice", aCon.PostNiceHandler).Methods(http.MethodPost)
+	r.HandleFunc("POST /article", aCon.PostArticleHandler)
+	r.HandleFunc("GET /article/list", aCon.ArticleListHandler)
+	r.HandleFunc("GET /article/{id}", aCon.ArticleDetailHandler)
+	r.HandleFunc("POST /article/nice", aCon.PostNiceHandler)
 
-	r.HandleFunc("/comment", cCon.PostCommentHandler).Methods(http.MethodPost)
+	r.HandleFunc("POST /comment", cCon.PostCommentHandler)
 
 	return r
 }
