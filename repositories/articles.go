@@ -78,8 +78,6 @@ func SelectArticleDetail(db *sql.DB, articleId int) (models.Article, error) {
 	return article, nil
 }
 
-// いいねの数を update する関数
-// -> 発生したエラーを返り値にする
 func UpdateNiceNum(db *sql.DB, articleId int) error {
 	const sqlGetNice = ` select nice
         from articles

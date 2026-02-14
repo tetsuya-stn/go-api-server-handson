@@ -12,7 +12,6 @@ func InsertComment(db *sql.DB, comment models.Comment) (models.Comment, error) {
 	const sqlStr = `
 	insert into comments (article_id, message, created_at) values (?, ?, now());
 	`
-	// (問 5) 構造体 models.Comment を受け取って、それをデータベースに挿入する処理
 	var newComment models.Comment
 	result, err := db.Exec(sqlStr, comment.ArticleId, comment.Message)
 	if err != nil {
@@ -33,8 +32,6 @@ func SelectCommentList(db *sql.DB, articleId int) ([]models.Comment, error) {
 					from comments
 					where article_id = ?;
 			`
-	// (問 6) 指定 ID の記事についたコメント一覧をデータベースから取得して、
-	// それを `models.Comment`構造体のスライス `[]models.Comment`に詰めて返す処理
 	commentArray := make([]models.Comment, 0)
 	rows, err := db.Query(sqlStr, articleId)
 	if err != nil {
