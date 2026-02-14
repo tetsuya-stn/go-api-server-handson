@@ -23,13 +23,14 @@ func (c *ArticleController) PostArticleHandler(w http.ResponseWriter, req *http.
 	var reqArticle models.Article
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
-		http.Error(w, "fail to decode json\n", http.StatusBadRequest)
+		apperrors.ErrorHandler(w, req, err)
+		return
 	}
 
 	article, err := c.service.PostArticleService(reqArticle)
 	if err != nil {
 		fmt.Printf("PostArticleService: %s", err.Error())
-		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
@@ -45,7 +46,7 @@ func (c *ArticleController) ArticleListHandler(w http.ResponseWriter, req *http.
 		page, err = strconv.Atoi(p[0])
 		if err != nil {
 			err = apperrors.BadParam.Wrap(err, "query param must be number")
-			http.Error(w, "Invalid query parameter", http.StatusBadRequest)
+			apperrors.ErrorHandler(w, req, err)
 			return
 		}
 	} else {
@@ -55,7 +56,7 @@ func (c *ArticleController) ArticleListHandler(w http.ResponseWriter, req *http.
 	articleList, err := c.service.GetArticleListService(page)
 	if err != nil {
 		fmt.Printf("GetArticleListService: %s", err.Error())
-		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
@@ -66,14 +67,14 @@ func (c *ArticleController) ArticleDetailHandler(w http.ResponseWriter, req *htt
 	articleId, err := strconv.Atoi(req.PathValue("id"))
 	if err != nil {
 		err = apperrors.BadParam.Wrap(err, "query param must be number")
-		http.Error(w, "Invalid query parameter", http.StatusBadRequest)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
 	article, err := c.service.GetArticleService(articleId)
 	if err != nil {
 		fmt.Printf("GetArticleService: %s", err.Error())
-		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
@@ -85,13 +86,13 @@ func (c *ArticleController) PostNiceHandler(w http.ResponseWriter, req *http.Req
 
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
-		http.Error(w, "fail to decode json", http.StatusBadRequest)
+		apperrors.ErrorHandler(w, req, err)
 	}
 
 	article, err := c.service.PostNiceService(reqArticle.Id)
 	if err != nil {
 		fmt.Printf("PostNiceService: %s", err.Error())
-		http.Error(w, "fail internal exec\n", http.StatusInternalServerError)
+		apperrors.ErrorHandler(w, req, err)
 		return
 	}
 
