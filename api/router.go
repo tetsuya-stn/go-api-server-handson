@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/tetsuya-stn/go-api-server-handson/api/middlewares"
 	"github.com/tetsuya-stn/go-api-server-handson/controllers"
 	"github.com/tetsuya-stn/go-api-server-handson/services"
 )
 
-func NewRouter(db *sql.DB) *http.ServeMux {
+func NewRouter(db *sql.DB) http.Handler {
 	ser := services.NewMyAppService(db)
 	aCon := controllers.NewArticleController(ser)
 	cCon := controllers.NewCommentController(ser)
@@ -21,5 +22,5 @@ func NewRouter(db *sql.DB) *http.ServeMux {
 
 	r.HandleFunc("POST /comment", cCon.PostCommentHandler)
 
-	return r
+	return middlewares.LoggingMiddleware(r)
 }
