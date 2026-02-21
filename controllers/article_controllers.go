@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -29,7 +28,6 @@ func (c *ArticleController) PostArticleHandler(w http.ResponseWriter, req *http.
 
 	article, err := c.service.PostArticleService(reqArticle)
 	if err != nil {
-		fmt.Printf("PostArticleService: %s", err.Error())
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}
@@ -55,7 +53,6 @@ func (c *ArticleController) ArticleListHandler(w http.ResponseWriter, req *http.
 
 	articleList, err := c.service.GetArticleListService(page)
 	if err != nil {
-		fmt.Printf("GetArticleListService: %s", err.Error())
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}
@@ -73,7 +70,6 @@ func (c *ArticleController) ArticleDetailHandler(w http.ResponseWriter, req *htt
 
 	article, err := c.service.GetArticleService(articleId)
 	if err != nil {
-		fmt.Printf("GetArticleService: %s", err.Error())
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}
@@ -91,7 +87,6 @@ func (c *ArticleController) PostNiceHandler(w http.ResponseWriter, req *http.Req
 
 	article, err := c.service.PostNiceService(reqArticle.Id)
 	if err != nil {
-		fmt.Printf("PostNiceService: %s", err.Error())
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}
