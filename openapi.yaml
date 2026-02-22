@@ -1,0 +1,298 @@
+openapi: 3.0.0
+info:
+  title: Go API Server - Blog Platform
+  description: MySQLデータベースを使用したブログ/記事プラットフォームのREST APIサーバー
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: ローカル開発サーバー
+
+paths:
+  /article:
+    post:
+      summary: 新しい記事を作成
+      description: 新しい記事を作成し、作成された記事を返します
+      operationId: postArticle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArticleRequest'
+            example:
+              title: "サンプル記事のタイトル"
+              contents: "これは記事の内容です。"
+              user_name: "山田太郎"
+      responses:
+        '200':
+          description: 記事の作成に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: リクエストボディの形式が不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /article/list:
+    get:
+      summary: 記事一覧を取得
+      description: ページネーションで記事一覧を取得します（1ページあたり5件）
+      operationId: getArticleList
+      parameters:
+        - name: page
+          in: query
+          description: ページ番号（デフォルト:1）
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          example: 1
+      responses:
+        '200':
+          description: 記事一覧の取得に成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+        '400':
+          description: ページパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /article/{id}:
+    get:
+      summary: 記事詳細を取得
+      description: 指定されたIDの記事詳細とコメントを取得します
+      operationId: getArticleDetail
+      parameters:
+        - name: id
+          in: path
+          description: 記事ID
+          required: true
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: 記事詳細の取得に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: 記事IDパラメータが不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: 指定された記事が見つからない
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /article/nice:
+    post:
+      summary: 記事に「いいね」を追加
+      description: 指定された記事の「いいね」カウントをインクリメントします
+      operationId: postNice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - article_id
+              properties:
+                article_id:
+                  type: integer
+                  description: いいねする記事のID
+            example:
+              article_id: 1
+      responses:
+        '200':
+          description: いいねの追加に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '400':
+          description: リクエストボディの形式が不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /comment:
+    post:
+      summary: コメントを投稿
+      description: 記事に新しいコメントを投稿します
+      operationId: postComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+            example:
+              article_id: 1
+              message: "素晴らしい記事ですね！"
+      responses:
+        '200':
+          description: コメントの投稿に成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: リクエストボディの形式が不正
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Article:
+      type: object
+      properties:
+        article_id:
+          type: integer
+          description: 記事ID
+          example: 1
+        title:
+          type: string
+          description: 記事のタイトル
+          example: "サンプル記事のタイトル"
+        contents:
+          type: string
+          description: 記事の内容
+          example: "これは記事の本文です。"
+        user_name:
+          type: string
+          description: 投稿者のユーザー名
+          example: "山田太郎"
+        nice:
+          type: integer
+          description: いいねの数
+          example: 5
+        comments:
+          type: array
+          description: 記事に付けられたコメントのリスト
+          items:
+            $ref: '#/components/schemas/Comment'
+        created_at:
+          type: string
+          format: date-time
+          description: 記事の作成日時
+          example: "2024-01-15T10:30:00Z"
+
+    ArticleRequest:
+      type: object
+      required:
+        - title
+        - contents
+        - user_name
+      properties:
+        title:
+          type: string
+          description: 記事のタイトル
+          example: "サンプル記事のタイトル"
+        contents:
+          type: string
+          description: 記事の内容
+          example: "これは記事の本文です。"
+        user_name:
+          type: string
+          description: 投稿者のユーザー名
+          example: "山田太郎"
+
+    Comment:
+      type: object
+      properties:
+        comment_id:
+          type: integer
+          description: コメントID
+          example: 1
+        article_id:
+          type: integer
+          description: コメントが付けられた記事のID
+          example: 1
+        message:
+          type: string
+          description: コメントの内容
+          example: "素晴らしい記事ですね！"
+        created_at:
+          type: string
+          format: date-time
+          description: コメントの投稿日時
+          example: "2024-01-15T11:00:00Z"
+
+    CommentRequest:
+      type: object
+      required:
+        - article_id
+        - message
+      properties:
+        article_id:
+          type: integer
+          description: コメントを投稿する記事のID
+          example: 1
+        message:
+          type: string
+          description: コメントの内容
+          example: "素晴らしい記事ですね！"
+
+    Error:
+      type: object
+      properties:
+        ErrCode:
+          type: string
+          description: エラーコード
+          example: "BadRequest"
+        Message:
+          type: string
+          description: エラーメッセージ
+          example: "bad request body"
+      description: エラーレスポンス
