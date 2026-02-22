@@ -24,9 +24,12 @@ func NewResponseWriter(w http.ResponseWriter) *responseWriter {
 
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		traceId := newTraceId()
+		ctx := SetTraceId(req.Context(), traceId)
+		req = req.WithContext(ctx)
 		rw := NewResponseWriter(w)
 		next.ServeHTTP(rw, req)
 
-		log.Println(req.Method, req.RequestURI, rw.statusCode)
+		log.Printf("[%d]%s %s %d\n", traceId, req.Method, req.RequestURI, rw.statusCode)
 	})
 }
