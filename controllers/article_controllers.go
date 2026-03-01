@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/tetsuya-stn/go-api-server-handson/apperrors"
+	"github.com/tetsuya-stn/go-api-server-handson/common"
 	"github.com/tetsuya-stn/go-api-server-handson/controllers/services"
 	"github.com/tetsuya-stn/go-api-server-handson/models"
 )
@@ -22,6 +24,13 @@ func (c *ArticleController) PostArticleHandler(w http.ResponseWriter, req *http.
 	var reqArticle models.Article
 	if err := json.NewDecoder(req.Body).Decode(&reqArticle); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+
+	authUserName := common.GetUserName(req.Context())
+	if reqArticle.UserName != authUserName {
+		err := apperrors.NotMatchUser.Wrap(errors.New("does not match reqBody user and idtoken user"), "invalid parameter")
 		apperrors.ErrorHandler(w, req, err)
 		return
 	}

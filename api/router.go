@@ -22,5 +22,5 @@ func NewRouter(db *sql.DB) http.Handler {
 
 	r.HandleFunc("POST /comment", cCon.PostCommentHandler)
 
-	return middlewares.LoggingMiddleware(r)
+	return middlewares.LoggingMiddleware(middlewares.AuthMiddleware(r))
 }

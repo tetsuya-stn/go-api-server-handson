@@ -3,6 +3,8 @@ package middlewares
 import (
 	"log"
 	"net/http"
+
+	"github.com/tetsuya-stn/go-api-server-handson/common"
 )
 
 type responseWriter struct {
@@ -25,7 +27,7 @@ func NewResponseWriter(w http.ResponseWriter) *responseWriter {
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		traceId := newTraceId()
-		ctx := SetTraceId(req.Context(), traceId)
+		ctx := common.SetTraceId(req.Context(), traceId)
 		req = req.WithContext(ctx)
 		rw := NewResponseWriter(w)
 		next.ServeHTTP(rw, req)
